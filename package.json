@@ -1,0 +1,7 @@
+{
+  "name": "pi-camera-shim",
+  "version": "0.0.1",
+  "dependencies": {
+    "@zino-hofmann/pi-camera-connect": "^1.2.0"
+  }
+}
