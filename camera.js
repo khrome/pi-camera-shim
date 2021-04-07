@@ -1,12 +1,13 @@
 var Camera = require("@zino-hofmann/pi-camera-connect");
 var path = require('path');
+var isPi = require('detect-rpi');
 
 var andFail = function(err){ throw err };
 var pos = 0; //this is exceptionally lazy and needs an attached reference
 //TODO: make it work for more than 1 stream at a time
 
 var loop = function(handler, backupPath){
-    if(true){ //TODO: detect if raspi, if not, deliver images from backup Path
+    if(isPi()){
         var streamCamera = new Camera.StreamCamera({
             codec: Camera.Codec.MJPEG,
         });
