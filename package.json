@@ -1,6 +1,6 @@
 {
   "name": "pi-camera-shim",
-  "version": "0.0.1",
+  "version": "0.0.2",
   "main": "camera.js",
   "dependencies": {
     "@zino-hofmann/pi-camera-connect": "^1.2.0",

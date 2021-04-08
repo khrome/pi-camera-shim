@@ -1,5 +1,6 @@
 var Camera = require("@zino-hofmann/pi-camera-connect");
 var path = require('path');
+var fs = require('fs');
 var isPi = require('detect-rpi');
 
 var andFail = function(err){ throw err };
@@ -25,15 +26,18 @@ var loop = function(handler, backupPath){
     }else{
         fs.readdir(backupPath, function(err, list){
             var files = list.filter(function(name){
-                return name[0] !== '.';
+                return name[0] === '.';
             });
-            fs.readFile(path.join(backupPath, list[pos], function(err, body){
+            //console.log('?', backupPath, files[pos])
+            fs.readFile(path.join(backupPath, files[pos]), function(err, body){
+                pos++;
                 handler(body, function(){
                     loop(handler);
+                }, function(){
+                    //todo: terminate
                 });
-            }));
+            });
         })
-        fs.readFile()
     }
 }
 
