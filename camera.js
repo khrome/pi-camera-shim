@@ -16,8 +16,11 @@ var loop = function(handler, backupPath){
             streamCamera.takeImage().then(function(image){
                 streamCamera.stopCapture().then(function(){
                     setTimeout(function(){
-                        handler(image, function(){
-                            loop(handler);
+                        handler(null, image, function(){
+                            loop(handler, backupPath);
+                        }, function(){
+                            streamCamera.stopCapture()
+                            //todo: terminate
                         });
                     }, 0);
                 }).catch(andFail);
@@ -25,14 +28,17 @@ var loop = function(handler, backupPath){
         }).catch(andFail);
     }else{
         fs.readdir(backupPath, function(err, list){
+            var offset = pos%list.length;
             var files = list.filter(function(name){
-                return name[0] === '.';
+                return name[0] !== '.';
             });
-            //console.log('?', backupPath, files[pos])
-            fs.readFile(path.join(backupPath, files[pos]), function(err, body){
+            fs.readFile(path.join(backupPath, files[offset]), function(err, body){
+                var hexBody = body.toString('base64');
                 pos++;
-                handler(body, function(){
-                    loop(handler);
+                handler(null, {
+                    base64Image : 'data:image/gif;base64,'+hexBody
+                }, function(){
+                    setTimeout(function(){ loop(handler, backupPath) }, 100);
                 }, function(){
                     //todo: terminate
                 });
