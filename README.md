@@ -1,6 +1,6 @@
 pi-camera-shim
 ==============
-Use a camera when local to pi, use test data when on a local system.
+Use a camera when local to pi, use test data(currently just still gif frames) when on a local system.
 
 Usage
 -----
