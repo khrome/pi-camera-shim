@@ -16,9 +16,9 @@ var loop = function(handler, backupPath){
             streamCamera.takeImage().then(function(image){
                 streamCamera.stopCapture().then(function(){
                     setTimeout(function(){
-                        var hexBody = body.toString('base64');
+                        var hexBody = image.toString('base64');
                         handler(null, {
-
+                            base64Image : 'data:image/jpg;base64,'+hexBody
                         }, function(){
                             loop(handler, backupPath);
                         }, function(){
