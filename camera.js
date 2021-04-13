@@ -16,10 +16,12 @@ var loop = function(handler, backupPath){
             streamCamera.takeImage().then(function(image){
                 streamCamera.stopCapture().then(function(){
                     setTimeout(function(){
-                        handler(null, image, function(){
+                        var hexBody = body.toString('base64');
+                        handler(null, {
+
+                        }, function(){
                             loop(handler, backupPath);
                         }, function(){
-                            streamCamera.stopCapture()
                             //todo: terminate
                         });
                     }, 0);
