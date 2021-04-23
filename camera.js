@@ -35,10 +35,11 @@ var loop = function(handler, backupPath){
                 return name[0] !== '.';
             });
             fs.readFile(path.join(backupPath, files[offset]), function(err, body){
+                var type = files[offset].split('.').pop().toLowerCase();
                 var hexBody = body.toString('base64');
                 pos++;
                 handler(null, {
-                    base64Image : 'data:image/gif;base64,'+hexBody
+                    base64Image : 'data:image/'+type+';base64,'+hexBody
                 }, function(){
                     setTimeout(function(){ loop(handler, backupPath) }, 100);
                 }, function(){
