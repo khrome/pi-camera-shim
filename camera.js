@@ -7,8 +7,12 @@ var andFail = function(err){ throw err };
 var pos = 0; //this is exceptionally lazy and needs an attached reference
 //TODO: make it work for more than 1 stream at a time
 
-var loop = function(handler, backupPath){
-    if(isPi()){
+var loop = function(handler, thePath){
+    var backupPath = (
+        typeof module.exports.pcMode === 'string' &&
+        module.exports.pcMode
+    ) || thePath;
+    if(module.exports.pcMode || isPi()){
         var streamCamera = new Camera.StreamCamera({
             codec: Camera.Codec.MJPEG,
         });
@@ -18,9 +22,12 @@ var loop = function(handler, backupPath){
                     setTimeout(function(){
                         var hexBody = image.toString('base64');
                         handler(null, {
-                            base64Image : 'data:image/jpg;base64,'+hexBody
+                            base64Image : 'data:image/jpg;base64,'+hexBody,
+                            image : image
                         }, function(){
-                            loop(handler, backupPath);
+                            setTimeout(function(){
+                                loop(handler, backupPath);
+                            }, 0);
                         }, function(){
                             //todo: terminate
                         });
@@ -29,6 +36,7 @@ var loop = function(handler, backupPath){
             }).catch(andFail);
         }).catch(andFail);
     }else{
+        if(!backupPath) throw new Error('No Path Provided, must execute on Pi');
         fs.readdir(backupPath, function(err, list){
             var offset = pos%list.length;
             var files = list.filter(function(name){
@@ -52,5 +60,27 @@ var loop = function(handler, backupPath){
 
 
 module.exports = {
+    pcMode : false,
+    saveFrames: function(directory, cb1, cb2){
+        if(!cb1) throw new Error('callback required');
+        var callback = cb2 || cb1;
+        var count = 0;
+        var terminate = (cb2 && cb1) || function(data){
+            return count > 100:true:false;
+        }
+        loop(function(err, data, nextIteration, terminate){
+            count++;
+            if(err) return callback(err);
+            fs.writeFile(path.join(directory, 'image-'+count+'.jpg'), data, function(err){
+                if(err) return callback(err);
+                if(terminate(data)){
+                    callback(null, count);
+                    terminate();
+                }else{
+                    nextIteration();
+                }
+            });
+        });
+    },
     pullAndProcessLoop: loop
 }
